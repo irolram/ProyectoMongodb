@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.proyectomongodb.repository.MongoClientConnectionExample
 import com.example.proyectomongodb.ui.theme.ProyectoMongodbTheme
+import com.example.proyectomongodb.viewUi.PantallaPrincipal
+import com.example.proyectomongodb.viewUi.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -23,7 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProyectoMongodbTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
-                    MongoClientConnectionExample.main()
+                    AppNavigation()
                 }
             }
         }
