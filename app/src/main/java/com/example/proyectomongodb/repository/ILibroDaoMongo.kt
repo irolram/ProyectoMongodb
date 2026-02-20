@@ -1,6 +1,7 @@
 package com.example.proyectomongodb.repository
 
 import com.example.proyectomongodb.model.Libro
+// CORRECCIÓN: Usamos el ObjectId nativo de Java/BSON en lugar del kbson
 import org.bson.types.ObjectId
 
 interface ILibroDaoMongo {

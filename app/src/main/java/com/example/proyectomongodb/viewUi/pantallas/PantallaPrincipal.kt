@@ -1,4 +1,4 @@
-package com.example.proyectomongodb.viewUi
+package com.example.proyectomongodb.viewUi.pantallas
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,10 +28,10 @@ fun PantallaPrincipal(onNavigate: (String) -> Unit) {
 
         val actions = listOf(
             "Obtener Todo" to { onNavigate("get_all") },
-            "Obtener por ID" to { println("Ejecutando: Obtener ID") },
+            "Obtener por ID" to {  },
             "Actualizar Libro" to { println("Ejecutando: Actualizar Libro") },
             "Eliminar Libro" to { println("Ejecutando: Eliminar Libro") },
-            "Insertar Libro" to { println("Ejecutando: Insertar Libro") }
+            "Insertar Libro" to { onNavigate("insert") }
         )
 
         LazyColumn(
