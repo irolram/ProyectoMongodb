@@ -31,7 +31,8 @@ class LibroViewModel : ViewModel() {
                 println("Error al cargar los libros desde MongoDB: ${e.message}")
             }
         }
-    }fun insertarLibro(titulo: String, autor: String, genero: String, anio: Int, editorial: String, paginas: Int, onSuccess: () -> Unit) {
+    }
+    fun insertarLibro(titulo: String, autor: String, genero: String, anio: Int, editorial: String, paginas: Int, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             val nuevoLibro = Libro(
                 titulo = titulo,

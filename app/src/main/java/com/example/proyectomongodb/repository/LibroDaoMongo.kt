@@ -12,7 +12,8 @@ class LibroDaoMongo : ILibroDaoMongo {
 
     @SuppressLint("AuthLeak")
 // Cambia esto en LibroDaoMongo.kt
-    private val connectionString ="mongodb+srv://ivanv2:t50pH1lYDeH3qfla@cluster0.q2o8nms.mongodb.net/?appName=Cluster0"
+// Usa esta versión para evitar el crash en Android
+    private val connectionString = "mongodb://ivanv2:ola@ac-fr4zkyq-shard-00-00.q2o8nms.mongodb.net:27017,ac-fr4zkyq-shard-00-01.q2o8nms.mongodb.net:27017,ac-fr4zkyq-shard-00-02.q2o8nms.mongodb.net:27017/?ssl=true&replicaSet=atlas-fr4zkyq-shard-0&authSource=admin&retryWrites=true&w=majority"
     private val client by lazy { MongoClients.create(connectionString) }
     private val database by lazy { client.getDatabase("BibliotecaEjercicio") }
     private val collection by lazy { database.getCollection("Biblioteca") }
@@ -24,7 +25,7 @@ class LibroDaoMongo : ILibroDaoMongo {
                 listaLibros.add(documentToLibro(document))
             }
         } catch (e: Exception) {
-            println("Error en getall: ${e.message}")
+            println("Error en get all: ${e.message}")
         }
         listaLibros
     }
@@ -34,9 +35,13 @@ class LibroDaoMongo : ILibroDaoMongo {
         val doc = collection.find(filtro).firstOrNull()
         doc?.let { documentToLibro(it) } ?: throw Exception("El libro no existe")
     }
-
     override suspend fun insert(libro: Libro): Boolean = withContext(Dispatchers.IO) {
+        println("DEBUG 1: Intentando conectar con ivanv2...")
         try {
+            // Forzamos un ping para ver si el servidor responde antes de insertar
+            val ping = database.runCommand(Document("ping", 1))
+            println("DEBUG 2: ¡Conexión establecida! Respuesta: $ping")
+
             val doc = Document("_id", libro._id)
                 .append("titulo", libro.titulo)
                 .append("autor", libro.autor)
@@ -46,10 +51,12 @@ class LibroDaoMongo : ILibroDaoMongo {
                 .append("paginas", libro.paginas)
                 .append("disponible", libro.disponible)
 
+            println("DEBUG 3: Enviando documento...")
             val result = collection.insertOne(doc)
+            println("DEBUG 4: ¡Insertado con éxito!")
             result.wasAcknowledged()
         } catch (e: Exception) {
-            println("Error al insertar: ${e.message}")
+            println("DEBUG ERROR FINAL: ${e.message}")
             false
         }
     }

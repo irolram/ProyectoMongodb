@@ -28,7 +28,8 @@ fun AppNavigation() {
         }
 
         composable(Pantalla.GetAll.route) {
-            ObtenerTodosLosLibrosScreen(viewModel = libroViewModel)
+            ObtenerTodosLosLibrosScreen(viewModel = libroViewModel,
+                onBackClick = { navController.popBackStack() })
         }
 
         composable(Pantalla.Insert.route) {
