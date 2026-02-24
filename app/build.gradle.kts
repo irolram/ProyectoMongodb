@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -67,9 +68,17 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 
-    implementation("org.mongodb:mongodb-driver-sync:4.7.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.x")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    
-    }
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    // El conversor de JSON (normalmente Gson o Moshi) para que el @Body funcione
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("androidx.compose.material:material-icons-core")
+    // Librería de iconos extendidos (donde está ArrowBack y muchos más)
+    implementation("androidx.compose.material:material-icons-extended")
+
+}

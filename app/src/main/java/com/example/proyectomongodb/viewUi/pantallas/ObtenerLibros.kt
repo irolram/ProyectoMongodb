@@ -1,5 +1,6 @@
 package com.example.proyectomongodb.viewUi.pantallas
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,17 +17,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.proyectomongodb.model.Libro
+import com.example.proyectomongodb.model.Pantalla
 import com.example.proyectomongodb.viewUi.viewModel.LibroViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ObtenerTodosLosLibrosScreen(
-    viewModel: LibroViewModel = viewModel(),
-    onBackClick: () -> Unit = {}
+    viewModel: LibroViewModel,
+    onBackClick: () -> Unit,
+    onNavigate: (String) -> Unit // Añadimos esto para poder saltar a "Update"
 ) {
+    // Usamos el nombre correcto de la variable que definiste arriba
     val listaLibros by viewModel.libros.collectAsState()
 
     Scaffold(
@@ -46,19 +49,26 @@ fun ObtenerTodosLosLibrosScreen(
         }
     ) { paddingValues ->
         if (listaLibros.isEmpty()) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
                 Text("No hay libros disponibles")
             }
         } else {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
+                modifier = Modifier.padding(paddingValues).fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+                // Cambiado 'libros' por 'listaLibros'
                 items(listaLibros) { libro ->
-                    LibroCard(libro)
+                    Box(modifier = Modifier.clickable {
+                        // 1. Guardamos el libro en el ViewModel
+                        viewModel.seleccionarLibro(libro)
+                        // 2. Navegamos usando la función que viene por parámetro
+                        onNavigate(Pantalla.Update.route)
+                    }) {
+                        // Usamos tu diseño de tarjeta que ya es muy bonito
+                        LibroCard(libro = libro)
+                    }
                 }
             }
         }
@@ -66,7 +76,7 @@ fun ObtenerTodosLosLibrosScreen(
 }
 
 @Composable
-fun LibroCard(libro: Libro) {
+fun LibroCard(libro: Libro,onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),

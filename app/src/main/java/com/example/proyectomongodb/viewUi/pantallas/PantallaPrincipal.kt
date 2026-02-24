@@ -28,9 +28,8 @@ fun PantallaPrincipal(onNavigate: (String) -> Unit) {
 
         val actions = listOf(
             "Obtener Todo" to { onNavigate("get_all") },
-            "Obtener por ID" to {  },
-            "Actualizar Libro" to { println("Ejecutando: Actualizar Libro") },
-            "Eliminar Libro" to { println("Ejecutando: Eliminar Libro") },
+            "Obtener por ID" to { onNavigate("get_by_id") },
+            "Eliminar Libro" to { onNavigate("delete") },
             "Insertar Libro" to { onNavigate("insert") }
         )
 

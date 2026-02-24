@@ -1,9 +1,7 @@
 package com.example.proyectomongodb.model
 
-import org.bson.types.ObjectId
-
 data class Libro(
-    val _id: ObjectId = ObjectId(),
+    val Id: Int = 0,
     val titulo: String,
     val autor: String,
     val genero: String,

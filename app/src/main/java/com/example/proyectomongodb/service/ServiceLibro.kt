@@ -2,26 +2,25 @@ package com.example.proyectomongodb.service
 
 import com.example.proyectomongodb.model.Libro
 import com.example.proyectomongodb.repository.LibroDaoMongo
-import org.bson.types.ObjectId
+import retrofit2.Response
 
-class ServiceLibro(private val libroDao: LibroDaoMongo): IServiceLibro {
+class ServiceLibro(private val libroDao: LibroDaoMongo) : IServiceLibro {
 
     override suspend fun getall(): List<Libro> {
         return libroDao.getall()
     }
 
-    override suspend fun getById(id: ObjectId): Libro {
+    override suspend fun getById(id: Int): Libro? {
         return libroDao.getById(id)
     }
+
 
     override suspend fun insert(libro: Libro): Boolean {
         return try {
             if (libro.titulo.isEmpty() || libro.autor.isEmpty()) {
-                println("DEBUG: Fallo de validación en Service")
+                println("DEBUG: Fallo de validación en Service (campos vacíos)")
                 return false
             }
-
-            // Llamada al DAO
             libroDao.insert(libro)
         } catch (e: Exception) {
             println("DEBUG ERROR en Service: ${e.message}")
@@ -29,19 +28,20 @@ class ServiceLibro(private val libroDao: LibroDaoMongo): IServiceLibro {
         }
     }
 
-    override suspend fun update(libro: Libro): Boolean {
+    override suspend fun update(id: Int, libro: Libro): Boolean {
+        return try {
+            require(libro.titulo.isNotEmpty()) { "El titulo no puede estar vacío" }
+            require(libro.autor.isNotEmpty()) { "El autor no puede estar vacío" }
+            require(libro.anioPublicacion >= 0) { "El año no puede ser negativo" }
 
-        require(libro.titulo.isNotEmpty()) { "El titulo no puede estar vacío" }
-        require(libro.autor.isNotEmpty()) { "El autor no puede estar vacío" }
-        require(libro.genero.isNotEmpty()) { "El genero no puede estar vacío" }
-        require(libro.anioPublicacion >= 0) { "El año de publicación no puede ser negativo" }
-        require(libro.editorial.isNotEmpty()) { "La editorial no puede estar vacía" }
-        require(libro.paginas >= 0) { "El número de páginas no puede ser negativo" }
-
-        return libroDao.update(libro)
+            libroDao.update(id, libro)
+        } catch (e: Exception) {
+            println("DEBUG ERROR en Service Update: ${e.message}")
+            false
+        }
     }
 
-    override suspend fun delete(id: ObjectId): Boolean {
+    override suspend fun delete(id: Int): Boolean {
         return libroDao.delete(id)
     }
 }
