@@ -1,5 +1,6 @@
 package com.example.proyectomongodb.model
 
+//Data class de la clase Libro
 data class Libro(
     val Id: Int = 0,
     val titulo: String,

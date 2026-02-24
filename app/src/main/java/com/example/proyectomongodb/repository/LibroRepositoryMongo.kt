@@ -2,12 +2,13 @@ package com.example.proyectomongodb.repository
 
 import ApiBibliotecaService
 import com.example.proyectomongodb.model.Libro
-import retrofit2.Response
 
-class LibroDaoMongo(private val apiService: ApiBibliotecaService): ILibroDaoMongo {
+class LibroRepositoryMongo(private val apiService: ApiBibliotecaService): ILibroRepositoryMongo {
 
+    //Función para obtener todos los libros, devuelve una lista de tipo Libro
     override suspend fun getall(): List<Libro> {
         return try {
+            //Llama a la funcion getLibros del apiService y devuelve la lista
             apiService.getLibros()
         } catch (e: Exception) {
             println("Error al obtener libros: ${e.message}")
@@ -15,35 +16,37 @@ class LibroDaoMongo(private val apiService: ApiBibliotecaService): ILibroDaoMong
         }
     }
 
+    //Función para obtener el libro con un ID especifico, devuelve un Libro o nulo
     override suspend fun getById(id: Int): Libro? {
-        val response = apiService.getLibrosById(id)
-        return response.body()
+        //Llama a la funcion getLibrosById del apiService y devuelve el libro
+        return apiService.getLibrosById(id).body()
     }
 
 
+    //Función para insertar un libro, devuelve un booleano
     override suspend fun insert(libro: Libro): Boolean {
         return try {
-            // 1. Llamamos a la API y guardamos la respuesta completa
+            //Variable para saber si se ha insertado correctamente el libro
             val response = apiService.insertarLibro(libro)
 
-            // 2. Comprobamos si el código HTTP es de éxito (200-299)
+            // Si es exitoso devuelve true, sino false
             if (response.isSuccessful) {
                 println(" Servidor: Libro guardado correctamente")
                 true
             } else {
-                // Aquí verás si Node.js rechazó el libro (ej. por ID duplicado)
                 println("Servidor rechazó el libro: ${response.code()}")
                 false
             }
         } catch (e: Exception) {
-            // Aquí verás si ni siquiera llegó al PC (ej. IP 10.0.2.2 mal)
             println(" Error de conexión: ${e.message}")
             false
         }
     }
 
+    //Función para actualizar un libro, devuelve un booleano
     override suspend fun update(id: Int, libro: Libro): Boolean {
         return try {
+            //Llama a la función updateLibro del apiService y devuelve true si sale bien
             apiService.updateLibro(id, libro)
             true
         } catch (e: Exception) {
@@ -52,8 +55,10 @@ class LibroDaoMongo(private val apiService: ApiBibliotecaService): ILibroDaoMong
         }
     }
 
+    // Función para borrar un libro, devuelve un booleano
     override suspend fun delete(id: Int): Boolean {
         return try {
+            //Llama a la funcion deleteLibro del apiService y devuelve true si sale bien
             apiService.deleteLibro(id)
             true
         } catch (e: Exception) {

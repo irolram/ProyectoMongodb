@@ -19,8 +19,10 @@ fun InsertarLibroScreen(
     viewModel: LibroViewModel,
     onBackClick: () -> Unit = {}
 ) {
+    //Variable para el contexto de la aplicación
     val context = LocalContext.current
 
+    // Estados para los campos del formulario
     var titulo by remember { mutableStateOf("") }
     var autor by remember { mutableStateOf("") }
     var genero by remember { mutableStateOf("") }
@@ -28,6 +30,7 @@ fun InsertarLibroScreen(
     var editorial by remember { mutableStateOf("") }
     var paginas by remember { mutableStateOf("") }
 
+    // Estructura de la pantalla
     Scaffold(
         topBar = {
             TopAppBar(

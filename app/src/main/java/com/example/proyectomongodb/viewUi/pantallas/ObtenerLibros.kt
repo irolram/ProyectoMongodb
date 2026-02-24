@@ -22,6 +22,7 @@ import com.example.proyectomongodb.model.Pantalla
 import com.example.proyectomongodb.viewUi.viewModel.LibroViewModel
 
 
+//Pantalla para obtener todos los libros
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ObtenerTodosLosLibrosScreen(
@@ -29,9 +30,10 @@ fun ObtenerTodosLosLibrosScreen(
     onBackClick: () -> Unit,
     onNavigate: (String) -> Unit // Añadimos esto para poder saltar a "Update"
 ) {
-    // Usamos el nombre correcto de la variable que definiste arriba
+    // Lista de libros desde el ViewModel
     val listaLibros by viewModel.libros.collectAsState()
 
+    // Estructura de la pantalla
     Scaffold(
         topBar = {
             TopAppBar(
@@ -75,6 +77,7 @@ fun ObtenerTodosLosLibrosScreen(
     }
 }
 
+//Funcion reutilzada para la tarjeta de libros
 @Composable
 fun LibroCard(libro: Libro,onClick: () -> Unit = {}) {
     Card(
@@ -125,6 +128,7 @@ fun LibroCard(libro: Libro,onClick: () -> Unit = {}) {
     }
 }
 
+//Función para mostrar el detalle de un texto
 @Composable
 fun DetalleTexto(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {

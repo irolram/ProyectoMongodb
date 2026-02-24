@@ -16,15 +16,15 @@ interface ApiBibliotecaService {
     @GET("api/libros/{id}")
     suspend fun getLibrosById(@Path("id") id: Int): Response<Libro>
 
-    @POST("api/libros")
+    @POST("api/insertarlibros")
     suspend fun insertarLibro(@Body libro: Libro): Response<Libro>
-    @PUT("api/libros/{id}")
+    @PUT("api/updatelibros/{id}")
     suspend fun updateLibro(@Path("id") id: Int, @Body libro: Libro): Libro
 
-    // El Map<String, Any> es perfecto para el PATCH, así solo envías lo que cambia
+    //No implementado
     @PATCH("api/libros/{id}")
     suspend fun patchLibro(@Path("id") id: Int, @Body campos: Map<String, Any>): Libro
 
-    @DELETE("api/libros/{id}")
+    @DELETE("api/borrarlibros/{id}")
     suspend fun deleteLibro(@Path("id") id: Int)
 }

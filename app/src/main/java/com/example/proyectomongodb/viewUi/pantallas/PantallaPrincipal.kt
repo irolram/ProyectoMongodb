@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 
+//Pantalla principal
 @Composable
 fun PantallaPrincipal(onNavigate: (String) -> Unit) {
     Column(
@@ -25,7 +26,7 @@ fun PantallaPrincipal(onNavigate: (String) -> Unit) {
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 24.dp)
         )
-
+        // Botones para navegar a las pantallas
         val actions = listOf(
             "Obtener Todo" to { onNavigate("get_all") },
             "Obtener por ID" to { onNavigate("get_by_id") },

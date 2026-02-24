@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.proyectomongodb.model.Libro
-import com.example.proyectomongodb.repository.LibroDaoMongo
+import com.example.proyectomongodb.repository.LibroRepositoryMongo
 import com.example.proyectomongodb.service.ServiceLibro
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -18,23 +18,36 @@ import kotlinx.coroutines.withContext
 
 class LibroViewModel : ViewModel() {
 
+    var libroEncontrado by mutableStateOf<Libro?>(null)
+        private set
+
+    var errorBusqueda by mutableStateOf("")
+        private set
+
     var libroSeleccionado by mutableStateOf<Libro?>(null)
         private set
     private val apiService = RetrofitObject.api
-    private val libroDao = LibroDaoMongo(apiService)
+    private val libroDao = LibroRepositoryMongo(apiService)
     private val libroService = ServiceLibro(libroDao)
 
     private val _libros = MutableStateFlow<List<Libro>>(emptyList())
     val libros: StateFlow<List<Libro>> = _libros.asStateFlow()
 
+    // Init para cargar los libros al inicio de ejecutar la aplicación
     init {
         cargarLibros()
     }
 
+    /*
+    Función para cargar los libros desde el repositorio actualizando el estado y contenido
+     */
     fun cargarLibros() {
+        //Arranca la corrutina de IO
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                // Llama a la función suspendida en el repositorio para obtener la lista
                 val lista = libroService.getall()
+                //Vuelve a la corrutina principal
                 withContext(Dispatchers.Main) {
                     _libros.value = lista
                 }
@@ -44,6 +57,9 @@ class LibroViewModel : ViewModel() {
         }
     }
 
+    /*
+    Función para insertar un libro en la base de datos @Param titulo, autor, genero, anio, editorial, paginas
+     */
     fun insertarLibro(
         titulo: String,
         autor: String,
@@ -53,7 +69,9 @@ class LibroViewModel : ViewModel() {
         paginas: Int,
         onSuccess: () -> Unit
     ) {
+        //Arranca la corrutina de IO
         viewModelScope.launch(Dispatchers.IO) {
+            //Creamos un nuevo libro para insertarlo
             val nuevoLibro = Libro(
                 // No pasamos ID porque el backend lo genera con el contador
                 titulo = titulo,
@@ -64,7 +82,7 @@ class LibroViewModel : ViewModel() {
                 paginas = paginas,
                 disponible = true
             )
-
+            // Variable para saber si se ha insertado correctamente
             val resultado = libroService.insert(nuevoLibro)
 
             if (resultado) {
@@ -77,8 +95,13 @@ class LibroViewModel : ViewModel() {
         }
     }
 
+    // Función para actualizar un libro existente
     fun actualizarLibro(libro: Libro, onSuccess: () -> Unit) {
+
+        //Arranca la corrutina de IO
         viewModelScope.launch(Dispatchers.IO) {
+
+            // Variable para saber si se ha actualizado correctamente
             val resultado = libroService.update(libro.Id, libro)
 
             if (resultado) {
@@ -86,31 +109,31 @@ class LibroViewModel : ViewModel() {
                 launch(Dispatchers.Main) {
                     onSuccess()
                 }
+            }else{
+                println("DEBUG: Error al insertar el libro en el servidor")
             }
         }
-    }    fun seleccionarLibro(libro: Libro) {
+    }
+
+    fun seleccionarLibro(libro: Libro) {
         libroSeleccionado = libro
     }
 
-var libroEncontrado by mutableStateOf<Libro?>(null)
-    private set
+    fun limpiarBusqueda() {
+        libroEncontrado = null
+        errorBusqueda = ""
+    }
 
-var errorBusqueda by mutableStateOf("")
-    private set
-
-fun limpiarBusqueda() {
-    libroEncontrado = null
-    errorBusqueda = ""
-}
-    // En tu LibroViewModel.kt
+    //Función para buscar un libro por su ID
     fun buscarLibroPorId(id: Int) {
+        //Arranca la corrutina de IO
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                errorBusqueda = ""
-                libroEncontrado = null
-
+                limpiarBusqueda()
+                // Llama a la función suspendida en el repositorio para obtener el libro
                 val libro = libroService.getById(id)
 
+                // Si el libro es diferente d nulo, lo asignamos a la variable,sino mostramos un mensaje de error
                 if (libro != null) {
                     libroEncontrado = libro
                 } else {
@@ -118,6 +141,31 @@ fun limpiarBusqueda() {
                 }
             } catch (e: Exception) {
                 errorBusqueda = "Error de conexión: ${e.message}"
+            }
+        }
+    }
+
+    //Función para eliminar un libro por su ID
+    fun eliminarLibro(id: Int, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        // Arranca la corrutina de IO
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // Llama a la función suspendida en el repositorio para eliminar el libro
+                val resultado = libroService.delete(id)
+
+                // Vuelve a la corrutina Main
+                withContext(Dispatchers.Main) {
+                    if (resultado) {
+                        cargarLibros()
+                        onSuccess()
+                    } else {
+                        onError("No se pudo eliminar el libro (¿Seguro que el ID $id existe?)")
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    onError("Error de conexión: ${e.message}")
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.proyectomongodb.model.Pantalla
 import com.example.proyectomongodb.viewUi.pantallas.ActualizarLibroScreen
+import com.example.proyectomongodb.viewUi.pantallas.EliminarLibroScreen
 import com.example.proyectomongodb.viewUi.pantallas.InsertarLibroScreen
 import com.example.proyectomongodb.viewUi.pantallas.ObtenerTodosLosLibrosScreen
 import com.example.proyectomongodb.viewUi.pantallas.PantallaPrincipal
@@ -17,9 +18,10 @@ import com.example.proyectomongodb.viewUi.viewModel.LibroViewModel
 @Composable
 fun AppNavigation() {
 
-
+    // Controlador de navegación
     val navController = rememberNavController()
 
+    // ViewModel
     val libroViewModel: LibroViewModel = viewModel()
 
     NavHost(
@@ -32,7 +34,7 @@ fun AppNavigation() {
                 onNavigate = { route -> navController.navigate(route) }
             )
         }
-
+        // 2. Obtener todos los libros
         composable(Pantalla.GetAll.route) {
             ObtenerTodosLosLibrosScreen(
                 viewModel = libroViewModel,
@@ -47,7 +49,7 @@ fun AppNavigation() {
                 onBackClick = { navController.popBackStack() }
             )
         }
-
+        // 4. Actualizar libro
         composable(Pantalla.Update.route) {
             val libro = libroViewModel.libroSeleccionado
             if (libro != null) {
@@ -60,13 +62,20 @@ fun AppNavigation() {
                 LaunchedEffect(Unit) { navController.popBackStack() }
             }
         }
-
+        // 5. Obtener libro por ID
         composable(Pantalla.GetById.route) {
             ObtenerLibroPorIdScreen(
                 viewModel = libroViewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }
-        composable(Pantalla.Delete.route) { /* Pendiente */ }
+        // 6. Eliminar libro
+        composable(Pantalla.Delete.route) {
+            EliminarLibroScreen(
+                viewModel = libroViewModel,
+                onBackClick = { navController.popBackStack() }
+            )
+
+        }
     }
 }

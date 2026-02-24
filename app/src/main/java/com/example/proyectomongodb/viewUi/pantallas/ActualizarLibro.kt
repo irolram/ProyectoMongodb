@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -34,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.example.proyectomongodb.model.Libro
 import com.example.proyectomongodb.viewUi.viewModel.LibroViewModel
 
+
+//Pantalla para actualizar un libro
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActualizarLibroScreen(
@@ -41,8 +42,10 @@ fun ActualizarLibroScreen(
     viewModel: LibroViewModel,
     onBackClick: () -> Unit
 ) {
+    // Variable para el contexto de la aplicación
     val context = LocalContext.current
 
+    // Estados para los campos del formulario
     var titulo by remember { mutableStateOf(libro.titulo) }
     var autor by remember { mutableStateOf(libro.autor) }
     var genero by remember { mutableStateOf(libro.genero) }
@@ -51,6 +54,7 @@ fun ActualizarLibroScreen(
     var paginas by remember { mutableStateOf(libro.paginas.toString()) }
     var disponible by remember { mutableStateOf(libro.disponible) }
 
+    //Estructura de la pantalla
     Scaffold(
         topBar = {
             TopAppBar(
@@ -96,6 +100,7 @@ fun ActualizarLibroScreen(
                 Text("¿Está disponible?")
             }
 
+            //Botón para guardar los cambios
             Button(
                 onClick = {
                     val libroEditado = libro.copy(

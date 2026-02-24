@@ -19,22 +19,24 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.proyectomongodb.viewUi.viewModel.LibroViewModel
 
-
+//Pantalla para obtener un libro por su ID
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ObtenerLibroPorIdScreen(
     viewModel: LibroViewModel,
     onBackClick: () -> Unit
 ) {
+    // Estados para el ID del libro, el mensaje de error y el libro encontrado
     var idTexto by remember { mutableStateOf("") }
-
-    val libro = viewModel.libroEncontrado
     val mensajeError = viewModel.errorBusqueda
 
+    val libro = viewModel.libroEncontrado
+
+    // Limpiar el campo de búsqueda al volver a la pantalla
     LaunchedEffect(Unit) {
         viewModel.limpiarBusqueda()
     }
-
+    //Estructura de la pantalla
     Scaffold(
         topBar = {
             TopAppBar(
@@ -76,6 +78,7 @@ fun ObtenerLibroPorIdScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // Botón para buscar el libro
             Button(
                 onClick = {
                     val id = idTexto.toIntOrNull()
