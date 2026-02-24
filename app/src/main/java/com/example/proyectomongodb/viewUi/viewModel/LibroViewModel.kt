@@ -18,18 +18,22 @@ import kotlinx.coroutines.withContext
 
 class LibroViewModel : ViewModel() {
 
+    //Variable para los libros que se hayan encontrado
     var libroEncontrado by mutableStateOf<Libro?>(null)
         private set
-
+    //Variable para el mensaje de error
     var errorBusqueda by mutableStateOf("")
         private set
-
+    //Variable para el libro seleccionado
     var libroSeleccionado by mutableStateOf<Libro?>(null)
         private set
-    private val apiService = RetrofitObject.api
-    private val libroDao = LibroRepositoryMongo(apiService)
-    private val libroService = ServiceLibro(libroDao)
 
+    //Instancias de los repositorios y servicios
+    private val apiService = RetrofitObject.api
+    private val libroRepository = LibroRepositoryMongo(apiService)
+    private val libroService = ServiceLibro(libroRepository)
+
+    // Estado para la lista de libros
     private val _libros = MutableStateFlow<List<Libro>>(emptyList())
     val libros: StateFlow<List<Libro>> = _libros.asStateFlow()
 
