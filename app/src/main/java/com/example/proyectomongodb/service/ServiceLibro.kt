@@ -3,19 +3,19 @@ package com.example.proyectomongodb.service
 import com.example.proyectomongodb.model.Libro
 import com.example.proyectomongodb.repository.LibroRepositoryMongo
 
-class ServiceLibro(private val libroDao: LibroRepositoryMongo) : IServiceLibro {
+class ServiceLibro(private val libroRepository: LibroRepositoryMongo) : IServiceLibro {
 
     //Funciones de la interfaz IServiceLibro
 
     //Función para obtener todos los libros, devuelve una lista de tipo Libro
     override suspend fun getall(): List<Libro> {
-        return libroDao.getall()
+        return libroRepository.getall()
     }
 
     //Función para obtener el libro con un ID especifico, devuelve un Libro o nulo
     override suspend fun getById(id: Int): Libro? {
 
-        return libroDao.getById(id)
+        return libroRepository.getById(id)
     }
 
     //Función para capturar errores al insertar un libro, devuelve un booleano
@@ -24,7 +24,7 @@ class ServiceLibro(private val libroDao: LibroRepositoryMongo) : IServiceLibro {
             require(libro.titulo.isNotEmpty()) { "El titulo no puede estar vacío" }
             require(libro.autor.isNotEmpty()){ "El autor no puede estar vacío" }
             require(libro.anioPublicacion <= 2027) { "El año no puede ser negativo" }
-            libroDao.insert(libro)
+            libroRepository.insert(libro)
         } catch (e: Exception) {
             println("DEBUG ERROR en Service: ${e.message}")
             false
@@ -37,7 +37,7 @@ class ServiceLibro(private val libroDao: LibroRepositoryMongo) : IServiceLibro {
             require(libro.autor.isNotEmpty()) { "El autor no puede estar vacío" }
             require(libro.anioPublicacion >= 0) { "El año no puede ser negativo" }
 
-            libroDao.update(id, libro)
+            libroRepository.update(id, libro)
         } catch (e: Exception) {
             println("DEBUG ERROR en Service Update: ${e.message}")
             false
@@ -48,7 +48,7 @@ class ServiceLibro(private val libroDao: LibroRepositoryMongo) : IServiceLibro {
     override suspend fun delete(id: Int): Boolean {
         return try {
             require(id >= 0) { "El ID no puede ser negativo" }
-            return libroDao.delete(id)
+            return libroRepository.delete(id)
 
         }catch (e: Exception){
             println("DEBUG ERROR en Service Delete: ${e.message}")
